@@ -3,6 +3,18 @@
 
 import numpy as np
 
+def mean_ndcg(clf, X, y):
+    # Predict class probabilities
+    y_predict = clf.predict_proba(X)
+    # Get highest 5 predictions
+    best_5 = np.argsort(-y_predict, axis=1)[:, :5]
+
+    # Transform to relevance scores
+    relevance = (best_5 == y[:, np.newaxis]).astype('int')
+
+    # Calculate ndcg for each sample and take average (?)
+    return np.mean([ndcg_at_k(row, 5) for row in relevance])
+
 def dcg_at_k(r, k, method=0):
     """Score is discounted cumulative gain (dcg)
     Relevance is positive real values.  Can use binary
