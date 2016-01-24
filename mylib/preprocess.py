@@ -59,15 +59,16 @@ def make_sessions_features(data, df_sessions):
     # Drop row with nan values from the "user_id" column as they're useless
     df_sessions = df_sessions.dropna(subset=["user_id"])
 
+    # print df_sessions
+
     # Frequency of devices - by user
     device_freq = df_sessions.groupby('user_id').device_type.value_counts()
-
+    
     # Frequency of actions taken - by user
     action_freq = df_sessions.groupby('user_id').action.value_counts()
 
     # Total list of users
-    users = data.id
-
+    users = data.id.values
     def feature_dict(df):
         f_dict = dict(list(df.groupby(level='user_id')))
         res = {}
@@ -96,6 +97,7 @@ def make_sessions_features(data, df_sessions):
 
     # We create a dataframe with the new features and we write it to disk
     df_sess_features = pd.DataFrame(features.todense())
+    
     df_sess_features['id'] = users
 
     #left joining data and sessions on user_id
